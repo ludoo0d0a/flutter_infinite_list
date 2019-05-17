@@ -1,11 +1,17 @@
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_infinite_list/bloc/bloc.dart';
 import 'package:flutter_infinite_list/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() => runApp(MyApp());
+import 'bloc/simple_bloc_delegate.dart';
 
+void main() {
+  //interceptor to log transition = each http request
+  BlocSupervisor().delegate = SimpleBlocDelegate();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -40,6 +46,7 @@ class _HomePageState extends State<HomePage>{
 
   @override
   Widget build(BuildContext context) {
+    // pass state from the context of the bloc = render
     return BlocBuilder(
       bloc: _postBloc,
       builder: (BuildContext context, PostState state) {
@@ -65,6 +72,7 @@ class _HomePageState extends State<HomePage>{
                   ? BottomLoader()
                   : PostWidget(post: state.posts[index]);
             },
+            // while end not reached, let a slot to display loader
             itemCount: state.hasReachedMax
                 ? state.posts.length
                 : state.posts.length + 1,

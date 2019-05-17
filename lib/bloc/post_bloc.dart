@@ -31,6 +31,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Stream<PostState> mapEventToState(PostEvent event) async* {
     if (event is Fetch && !_hasReachedMax(currentState)) {
       try {
+        // first load
         if (currentState is PostUninitialized) {
           final posts = await _fetchPosts(0, 20);
           yield PostLoaded(posts: posts, hasReachedMax: false);
